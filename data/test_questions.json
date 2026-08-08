@@ -1,0 +1,42 @@
+[
+  {
+    "question": "What is Foundry Local?",
+    "expected": "answerable"
+  },
+  {
+    "question": "What does RAG stand for?",
+    "expected": "answerable"
+  },
+  {
+    "question": "What are the advantages of SQLite?",
+    "expected": "answerable"
+  },
+  {
+    "question": "What is Azure Machine Learning?",
+    "expected": "answerable"
+  },
+  {
+    "question": "How does deep learning differ from traditional machine learning?",
+    "expected": "answerable"
+  },
+  {
+    "question": "What is machine learning?",
+    "expected": "answerable"
+  },
+  {
+    "question": "What are common NLP tasks?",
+    "expected": "answerable"
+  },
+  {
+    "question": "How does computer vision work?",
+    "expected": "answerable"
+  },
+  {
+    "question": "How much does Azure Machine Learning cost per month?",
+    "expected": "unanswerable"
+  },
+  {
+    "question": "What is the capital of France?",
+    "expected": "unanswerable"
+  }
+]

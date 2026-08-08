@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Local RAG Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script>
+  // Applied before paint to avoid a flash of the wrong theme.
+  (function () {
+    var saved = localStorage.getItem("theme");
+    if (saved) document.documentElement.setAttribute("data-theme", saved);
+  })();
+</script>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-title">
+        <span class="logo-icon" role="img" aria-label="Local RAG Assistant logo"></span>
+        <div>
+          <h1>Local RAG Assistant</h1>
+          <p class="subtitle">Fully offline · Runs on Foundry Local</p>
+        </div>
+      </div>
+      <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode"></button>
+    </header>
+
+    <main class="chat" id="chat">
+      <div class="intro-card" id="emptyState">
+        <div class="intro-title"><span class="status-dot"></span>Local RAG Assistant — Ready</div>
+        <p class="intro-subtitle">Running entirely on this device — no internet connection required.</p>
+        <p class="intro-label">Ask me about:</p>
+        <ul class="intro-list">
+          <li>Foundry Local and offline AI runtimes</li>
+          <li>Retrieval-Augmented Generation (RAG)</li>
+          <li>SQLite and vector search</li>
+          <li>Azure Machine Learning</li>
+          <li>Deep learning and neural networks</li>
+          <li>Machine learning fundamentals</li>
+          <li>Natural language processing (NLP)</li>
+          <li>Computer vision</li>
+        </ul>
+      </div>
+    </main>
+
+    <form class="composer" id="composer">
+      <textarea
+        id="question"
+        placeholder="Type a question... (Enter: send, Shift+Enter: new line)"
+        rows="1"
+        autofocus
+      ></textarea>
+      <button type="submit" id="sendBtn" aria-label="Send">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </form>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

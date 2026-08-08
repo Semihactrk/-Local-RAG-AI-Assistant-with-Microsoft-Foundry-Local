@@ -1,0 +1,355 @@
+/* Local RAG Assistant — dark-first theme, amber/orange accent (Foundry theme) */
+
+:root {
+  --bg: #0f1115;
+  --surface: #171a21;
+  --surface-2: #1e222b;
+  --border: #2a2f3a;
+  --text: #e8e9ec;
+  --text-muted: #9aa0ac;
+  --accent: #f5892e;
+  --accent-2: #ff5f6d;
+  --accent-soft: rgba(245, 137, 46, 0.14);
+  --user-bubble: linear-gradient(135deg, #f5892e, #ff5f6d);
+  --danger: #ff6b6b;
+  --radius: 14px;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* Light tokens apply when the system prefers light AND the user hasn't
+   explicitly forced dark mode via the toggle button. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f6f5f3;
+    --surface: #ffffff;
+    --surface-2: #f0eeea;
+    --border: #e3e0da;
+    --text: #201d1a;
+    --text-muted: #6b6459;
+    --accent-soft: rgba(245, 137, 46, 0.12);
+    --shadow: 0 8px 24px rgba(30, 20, 10, 0.08);
+  }
+}
+
+/* Explicit choice via the toggle button always wins, regardless of system preference. */
+:root[data-theme="light"] {
+  --bg: #f6f5f3;
+  --surface: #ffffff;
+  --surface-2: #f0eeea;
+  --border: #e3e0da;
+  --text: #201d1a;
+  --text-muted: #6b6459;
+  --accent-soft: rgba(245, 137, 46, 0.12);
+  --shadow: 0 8px 24px rgba(30, 20, 10, 0.08);
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f1115;
+  --surface: #171a21;
+  --surface-2: #1e222b;
+  --border: #2a2f3a;
+  --text: #e8e9ec;
+  --text-muted: #9aa0ac;
+  --accent-soft: rgba(245, 137, 46, 0.14);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* ---------- Header ---------- */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  flex-shrink: 0;
+  background-image: url("logo.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 0 10px var(--accent-soft));
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.theme-toggle {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.06);
+  border-color: var(--accent);
+}
+
+/* ---------- Chat area ---------- */
+
+.chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Intro / capabilities card shown before the first message (inspired by the
+   "Ready" status card in Microsoft's Foundry Local RAG blog example). */
+
+.intro-card {
+  align-self: flex-start;
+  max-width: 420px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+}
+
+.intro-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3ecf8e;
+  box-shadow: 0 0 8px #3ecf8e;
+  flex-shrink: 0;
+}
+
+.intro-subtitle {
+  margin: 6px 0 14px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.intro-label {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.intro-list {
+  margin: 0 0 14px;
+  padding-left: 20px;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+
+.msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 78%;
+  animation: rise 0.22s ease-out;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.msg.user {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.msg.assistant {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+.bubble {
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.msg.user .bubble {
+  background: var(--user-bubble);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+  box-shadow: var(--shadow);
+}
+
+.msg.assistant .bubble {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+
+.msg.assistant .bubble.not-found {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.msg.assistant .bubble.error {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 0 4px;
+}
+
+.meta-time {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.source-chip {
+  font-size: 11px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+
+/* Typing indicator */
+
+.typing {
+  display: flex;
+  gap: 4px;
+  padding: 14px 16px;
+}
+
+.typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: bounce 1.2s infinite ease-in-out;
+}
+
+.typing span:nth-child(2) { animation-delay: 0.15s; }
+.typing span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-5px); opacity: 1; }
+}
+
+/* ---------- Composer ---------- */
+
+.composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 16px 24px 22px;
+  border-top: 1px solid var(--border);
+}
+
+#question {
+  flex: 1;
+  resize: none;
+  max-height: 160px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+#question:focus {
+  border-color: var(--accent);
+}
+
+#sendBtn {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: var(--user-bubble);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.15s;
+}
+
+#sendBtn:hover { transform: scale(1.05); }
+#sendBtn:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+/* Scrollbar */
+
+.chat::-webkit-scrollbar { width: 8px; }
+.chat::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
