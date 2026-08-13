@@ -62,8 +62,8 @@ py -3.11 -m venv .venv
 | `src/ingest.py` | Step 2: chunking → embedding → SQLite |
 | `src/retrieval.py` | Step 3: top-K retrieval via cosine similarity |
 | `src/app.py` | Step 4: `answer_query()`/`run_query()` + CLI interface |
-| `src/flask_app.py` | Step 5: Flask server, `/api/ask` JSON endpoint |
-| `templates/index.html`, `static/style.css`, `static/app.js` | Step 5: web UI (chat bubbles, source chips, typing animation) |
+| `src/flask_app.py` | Step 5: Flask server, `/api/ask`, `/api/conversations/<id>` JSON endpoints |
+| `templates/index.html`, `static/style.css`, `static/app.js` | Step 5: web UI — sidebar (source archive + conversation history), chat bubbles, source chips, typing animation |
 | `src/evaluate.py` | Step 6: automated test/report |
 | `src/calibrate_threshold.py` | Re-measures `RETRIEVAL_SCORE_THRESHOLD` (re-run whenever the document set changes) |
 | `src/list_models.py` | Lists every model alias in the catalog |
@@ -86,6 +86,15 @@ py -3.11 -m venv .venv
   loads the models once at server startup; `/api/ask` returns JSON. The UI
   has chat bubbles, source chips, a response-time badge, and a "typing..."
   animation — tested end-to-end in the browser (see findings below).
+- **Sidebar:** a two-panel layout (inspired by a Microsoft Foundry Local RAG
+  example screenshot) with a **Source Archive** — the actual files under
+  `data/documents/` with their size, read fresh on every page load — and
+  **Conversations**, persisted in two new SQLite tables (`conversations`,
+  `messages`) via `db.py`. "+ New conversation" resets the chat to the intro
+  card; clicking a past conversation reloads its full message history from
+  `GET /api/conversations/<id>`. A new conversation is auto-created (and
+  auto-titled from the first question) on the first `POST /api/ask` call
+  that doesn't include a `conversation_id`.
 
 ## GPU note (a two-stage finding, verified then corrected)
 
@@ -229,7 +238,11 @@ are now part of `data/test_questions.json` as a permanent regression test.
 ## Known limitations
 
 - Retrieval uses brute-force cosine similarity (fine for a small N).
-- The chat model assumes single-turn Q&A; it doesn't keep multi-turn
-  conversation history.
+- Conversations are **stored and browsable** in the sidebar, but each
+  question is still answered independently — prior turns in the same
+  conversation are *not* fed back into the LLM's prompt. A follow-up like
+  "what about that?" won't have context; every question is treated as a
+  fresh RAG query against the documents. Adding real multi-turn context
+  would mean including recent message history in `build_prompt()`.
 - Source citation is now added deterministically from code (see the finding
   above) — it doesn't rely on the LLM.

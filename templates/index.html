@@ -26,37 +26,71 @@
       <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode"></button>
     </header>
 
-    <main class="chat" id="chat">
-      <div class="intro-card" id="emptyState">
-        <div class="intro-title"><span class="status-dot"></span>Local RAG Assistant — Ready</div>
-        <p class="intro-subtitle">Running entirely on this device — no internet connection required.</p>
-        <p class="intro-label">Ask me about:</p>
-        <ul class="intro-list">
-          <li>Foundry Local and offline AI runtimes</li>
-          <li>Retrieval-Augmented Generation (RAG)</li>
-          <li>SQLite and vector search</li>
-          <li>Azure Machine Learning</li>
-          <li>Deep learning and neural networks</li>
-          <li>Machine learning fundamentals</li>
-          <li>Natural language processing (NLP)</li>
-          <li>Computer vision</li>
-        </ul>
-      </div>
-    </main>
+    <div class="body">
+      <aside class="sidebar">
+        <button type="button" id="newConvBtn" class="new-conv-btn">+ New conversation</button>
 
-    <form class="composer" id="composer">
-      <textarea
-        id="question"
-        placeholder="Type a question... (Enter: send, Shift+Enter: new line)"
-        rows="1"
-        autofocus
-      ></textarea>
-      <button type="submit" id="sendBtn" aria-label="Send">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-    </form>
+        <div class="sidebar-section">
+          <div class="sidebar-label">Conversations</div>
+          <ul class="conv-list" id="convList">
+            {% for c in conversations %}
+            <li class="conv-item" data-id="{{ c.id }}">{{ c.title }}</li>
+            {% else %}
+            <li class="sidebar-empty">No conversations yet</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Source Archive</div>
+          <ul class="doc-list">
+            {% for d in documents %}
+            <li class="doc-item">
+              <span class="doc-icon">📄</span>
+              <span class="doc-name">{{ d.name }}</span>
+              <span class="doc-size">{{ d.size }}</span>
+            </li>
+            {% else %}
+            <li class="sidebar-empty">No documents ingested</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </aside>
+
+      <div class="content">
+        <main class="chat" id="chat">
+          <div class="intro-card" id="emptyState">
+            <div class="intro-title"><span class="status-dot"></span>Local RAG Assistant — Ready</div>
+            <p class="intro-subtitle">Running entirely on this device — no internet connection required.</p>
+            <p class="intro-label">Ask me about:</p>
+            <ul class="intro-list">
+              <li>Foundry Local and offline AI runtimes</li>
+              <li>Retrieval-Augmented Generation (RAG)</li>
+              <li>SQLite and vector search</li>
+              <li>Azure Machine Learning</li>
+              <li>Deep learning and neural networks</li>
+              <li>Machine learning fundamentals</li>
+              <li>Natural language processing (NLP)</li>
+              <li>Computer vision</li>
+            </ul>
+          </div>
+        </main>
+
+        <form class="composer" id="composer">
+          <textarea
+            id="question"
+            placeholder="Type a question... (Enter: send, Shift+Enter: new line)"
+            rows="1"
+            autofocus
+          ></textarea>
+          <button type="submit" id="sendBtn" aria-label="Send">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
 
   <script src="{{ url_for('static', filename='app.js') }}"></script>

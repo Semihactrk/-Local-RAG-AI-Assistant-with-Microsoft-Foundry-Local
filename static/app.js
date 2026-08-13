@@ -21,17 +21,25 @@ themeToggle.addEventListener("click", () => {
 updateThemeIcon();
 
 const chat = document.getElementById("chat");
-const emptyState = document.getElementById("emptyState");
 const composer = document.getElementById("composer");
 const question = document.getElementById("question");
 const sendBtn = document.getElementById("sendBtn");
+const newConvBtn = document.getElementById("newConvBtn");
+const convList = document.getElementById("convList");
+
+const introCardHTML = document.getElementById("emptyState").outerHTML;
+let currentConversationId = null;
 
 function scrollToBottom() {
   chat.scrollTop = chat.scrollHeight;
 }
 
+function showIntroCard() {
+  chat.innerHTML = introCardHTML;
+}
+
 function addMessage(role, text, extra = {}) {
-  emptyState.remove();
+  document.getElementById("emptyState")?.remove();
 
   const msg = document.createElement("div");
   msg.className = `msg ${role}`;
@@ -68,7 +76,7 @@ function addMessage(role, text, extra = {}) {
 }
 
 function showTyping() {
-  emptyState.remove?.();
+  document.getElementById("emptyState")?.remove();
   const msg = document.createElement("div");
   msg.className = "msg assistant";
   msg.id = "typingMsg";
@@ -81,6 +89,62 @@ function hideTyping() {
   document.getElementById("typingMsg")?.remove();
 }
 
+function setActiveConversation(id) {
+  convList.querySelectorAll(".conv-item").forEach((el) => {
+    el.classList.toggle("active", el.dataset.id === String(id));
+  });
+}
+
+function addConversationToSidebar(id, title) {
+  convList.querySelector(".sidebar-empty")?.remove();
+  const li = document.createElement("li");
+  li.className = "conv-item active";
+  li.dataset.id = id;
+  li.textContent = title;
+  convList.prepend(li);
+  setActiveConversation(id);
+}
+
+async function loadConversation(id) {
+  try {
+    const res = await fetch(`/api/conversations/${id}`);
+    const data = await res.json();
+    if (!res.ok) return;
+
+    chat.innerHTML = "";
+    (data.messages || []).forEach((m) => {
+      if (m.role === "user") {
+        addMessage("user", m.content);
+      } else {
+        addMessage("assistant", m.content, {
+          seconds: m.seconds,
+          sources: m.sources,
+          notFound: !m.sources || m.sources.length === 0,
+        });
+      }
+    });
+    if (!data.messages || data.messages.length === 0) showIntroCard();
+
+    currentConversationId = id;
+    setActiveConversation(id);
+  } catch (err) {
+    // Server unreachable -- leave the current view as-is.
+  }
+}
+
+newConvBtn.addEventListener("click", () => {
+  currentConversationId = null;
+  showIntroCard();
+  setActiveConversation(null);
+  question.focus();
+});
+
+convList.addEventListener("click", (e) => {
+  const item = e.target.closest(".conv-item");
+  if (!item) return;
+  loadConversation(item.dataset.id);
+});
+
 async function ask(q) {
   addMessage("user", q);
   showTyping();
@@ -90,7 +154,7 @@ async function ask(q) {
     const res = await fetch("/api/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: q }),
+      body: JSON.stringify({ question: q, conversation_id: currentConversationId }),
     });
     const data = await res.json();
     hideTyping();
@@ -103,8 +167,13 @@ async function ask(q) {
     addMessage("assistant", data.answer, {
       seconds: data.seconds,
       sources: data.sources,
-      notFound: data.skipped_llm && data.sources.length === 0,
+      notFound: data.sources.length === 0,
     });
+
+    if (data.is_new_conversation) {
+      addConversationToSidebar(data.conversation_id, data.title);
+    }
+    currentConversationId = data.conversation_id;
   } catch (err) {
     hideTyping();
     addMessage("assistant", "Couldn't reach the server. Make sure the Flask server is running.", { error: true });
